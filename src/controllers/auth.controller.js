@@ -41,6 +41,8 @@ async function generateTokens(res, user) {
   res.cookie('refreshToken', refreshAccessToken, {
     HttpOnly: true,
     maxAge: 30 * 24 * 60 * 60 * 1000,
+    sameSite: 'None',
+    secure: true,
   });
 
   res.send({
@@ -73,14 +75,13 @@ const activate = async (req, res) => {
   const user = await User.findOne({ activationToken: activationToken });
 
   if (!user) {
-    res.sendStatus(404);
-    return;
+    throw ApiError.notFound('Not found');
   }
 
   user.activationToken = null;
   await user.save();
 
-  res.send(user);
+  generateTokens(res, user);
 };
 
 const login = async (req, res) => {
