@@ -13,7 +13,7 @@ function verify(token) {
     return jwt.verify(token, process.env.JWT_KEY);
   } catch (error) {
     return null;
-  }
+  } 
 }
 
 function signRefresh(user) {

@@ -11,7 +11,7 @@ function validateEmail(value) {
     return 'Email is required';
   }
 
-  const emailPattern = /^[\w.+-]+@([\w-]+\.){1,3}[\w-]{2,}$/;
+  const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{1,}$/;
 
   if (!emailPattern.test(value)) {
     return 'Email is not valid';
@@ -30,11 +30,20 @@ function validatePassword(value) {
   }
 }
 
-async function generateTokens(res, user) {
+async function generateTokens(res, user, setAccessToken = true) {
   const normalizedUser = userService.normalize(user);
 
-  const accessToken = jwtService.sign(normalizedUser);
+  const accessToken = setAccessToken ? jwtService.sign(normalizedUser) : null;
   const refreshAccessToken = jwtService.signRefresh(normalizedUser);
+
+  if (setAccessToken) {
+    res.cookie('accessToken', accessToken, {
+      HttpOnly: true,
+      maxAge: 180 * 60 * 1000,
+      sameSite: 'None',
+      secure: true,
+    });
+  }
 
   await tokenService.save(normalizedUser.id, refreshAccessToken);
 
@@ -46,8 +55,10 @@ async function generateTokens(res, user) {
   });
 
   res.send({
+    message: 'Welcome!',
+    success: true,
     user: normalizedUser,
-    accessToken,
+    accessToken: setAccessToken ? accessToken : null,
   });
 }
 
@@ -90,13 +101,17 @@ const login = async (req, res) => {
   const user = await userService.findByEmail(email);
 
   if (!user) {
-    throw ApiError.badRequest('No such user');
+    throw ApiError.badRequest('Wrong email or password');
   }
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
 
   if (!isPasswordValid) {
-    throw ApiError.badRequest('Wrong password');
+    throw ApiError.badRequest('Wrong email or password');
+  }
+
+  if (user.activationToken) {
+    throw ApiError.badRequest('Account is not activated');
   }
 
   generateTokens(res, user);
@@ -128,10 +143,31 @@ const logout = async (req, res) => {
   res.sendStatus(204);
 };
 
+const verify = async (req, res) => {
+  try {
+    const accessToken = req.cookies.accessToken;
+
+    if (accessToken) {
+      const userData = jwtService.verify(accessToken);
+      req.user = userData;
+      res.status(200).send({ success: true, message: 'Welcome!' });
+    } else {
+      // No access token, try to verify using refresh token
+      await refresh(req, res);
+    }
+  } catch (error) {
+    // Both access token and refresh token verification failed
+    res
+      .status(401)
+      .send({ success: false, message: 'Invalid access and refresh tokens' });
+  }
+};
+
 export const authController = {
   register,
   activate,
   login,
   refresh,
   logout,
+  verify,
 };
