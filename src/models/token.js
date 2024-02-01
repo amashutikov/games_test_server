@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 
-const tokenSchema = new mongoose.Schema(
+const tokenSchema = new Schema(
   {
     refreshToken: {
       type: String,

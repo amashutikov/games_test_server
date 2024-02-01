@@ -5,6 +5,7 @@ import { authRouter } from './routes/auth.route.js';
 import cors from 'cors';
 import { errorMiddleware } from './middlewares/errorMiddleware.js';
 import cookieParser from 'cookie-parser';
+import { gamesRouter } from './routes/games.route.js';
 
 const PORT = process.env.PORT || 3006;
 const mongoString = process.env.DATABASE_URL;
@@ -29,6 +30,7 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 app.use(authRouter);
+app.use('/games', gamesRouter)
 
 app.get('/', (req, res) => {
   res.send('Hello');
