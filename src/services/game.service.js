@@ -11,8 +11,21 @@ const getTopRatedGames = async (numberOfGames) => {
 };
 
 const getGamesByGenre = async (genreId, limit, offset) => {
+  if (genreId) {
+    try {
+      const items = await DataModel.find({ genres: genreId })
+        .skip(Number(offset))
+        .limit(Number(limit))
+        .exec();
+      return items;
+    } catch (error) {
+      console.error('Error:', error);
+      throw error;
+    }
+  }
+
   try {
-    const items = await DataModel.find({ genres: genreId })
+    const items = await DataModel.find()
       .skip(Number(offset))
       .limit(Number(limit))
       .exec();

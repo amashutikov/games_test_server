@@ -6,6 +6,7 @@ import cors from 'cors';
 import { errorMiddleware } from './middlewares/errorMiddleware.js';
 import cookieParser from 'cookie-parser';
 import { gamesRouter } from './routes/games.route.js';
+import { newsRouter } from './routes/news.route.js';
 
 const PORT = process.env.PORT || 3006;
 const mongoString = process.env.DATABASE_URL;
@@ -23,14 +24,17 @@ database.once('connected', () => {
 
 const app = express();
 
-app.use(cors({
-  origin: process.env.CLIENT_URL,
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 app.use(authRouter);
-app.use('/games', gamesRouter)
+app.use('/games', gamesRouter);
+app.use('/news', newsRouter);
 
 app.get('/', (req, res) => {
   res.send('Hello');

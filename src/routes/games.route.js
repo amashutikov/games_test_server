@@ -4,5 +4,5 @@ import { catchError } from '../utils/catchError.js';
 
 export const gamesRouter = express.Router();
 
-gamesRouter.get('/top', catchError(gamesController.getTopRatedGames));
-gamesRouter.get('/byGenre', catchError(gamesController.getGamesByGenre));
+gamesRouter.post('/top', catchError(gamesController.getTopRatedGames));
+gamesRouter.post('/byGenre', catchError(gamesController.getGamesByGenre));

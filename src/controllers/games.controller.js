@@ -12,12 +12,7 @@ const getTopRatedGames = async (req, res) => {
   const count = await gameService.getNumberOfGames();
 
   const topGames = (await gameService.getTopRatedGames(numberOfGames))
-    .map((game) => ({
-      id: game.id,
-      weightedRating: game.weightedRating,
-      totalRating: game.totalRating,
-      genres: game.genres,
-    }))
+    .map((game) => game.id)
     .sort((a, b) => b.totalRating - a.totalRating);
 
   res.status(200).send({ games: topGames, count });
@@ -26,21 +21,20 @@ const getTopRatedGames = async (req, res) => {
 const getGamesByGenre = async (req, res) => {
   const { genre, limit, offset } = req.body;
 
-  if (!(Number(genre) && Number(limit) && Number(offset))) {
-    if (offset !== '0') {
-      throw ApiError.badRequest('Wrong request body data', errors);
-    }
+  if (
+    !(
+      Number.isFinite(genre) &&
+      Number.isFinite(Number(limit)) &&
+      Number.isFinite(Number(offset))
+    )
+  ) {
+    throw ApiError.badRequest('Wrong request body data', errors);
   }
 
   const count = await gameService.getNumberOfGames(genre);
 
   const games = (await gameService.getGamesByGenre(genre, limit, offset))
-    .map((game) => ({
-      id: game.id,
-      weightedRating: game.weightedRating,
-      totalRating: game.totalRating,
-      genres: game.genres,
-    }))
+    .map((game) => game.id)
     .sort((a, b) => b.totalRating - a.totalRating);
 
   res.status(200).send({ games, count });
