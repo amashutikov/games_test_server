@@ -14,7 +14,8 @@ const getNewsById = async (id) => {
 const getNews = async (limit = 5, offset = 0) => {
   try {
     const news = await NewsModel.find().skip(offset).limit(limit).exec();
-    return news;
+    const numberOfNews = await NewsModel.countDocuments();
+    return { news, numberOfNews };
   } catch (error) {
     console.error('Error:', error);
     throw error;
