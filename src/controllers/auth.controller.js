@@ -40,6 +40,8 @@ async function generateTokens(req, res, user, setAccessToken = true) {
 
   const domain = getDomain(requestOrigin);
 
+  console.log(domain);
+
   if (setAccessToken) {
     res.cookie('accessToken', accessToken, {
       domain: domain,
@@ -71,10 +73,9 @@ async function generateTokens(req, res, user, setAccessToken = true) {
 function getDomain(origin) {
   let domain = '';
 
-  const parts = origin.split('.');
-  if (parts.length > 2) {
-    domain = parts.slice(1).join('.');
-    console.log(domain);
+  const parts = origin.split('//');
+  if (parts.length) {
+    domain = parts[1];
   } else {
     domain = origin;
   }
