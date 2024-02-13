@@ -30,14 +30,19 @@ function validatePassword(value) {
   }
 }
 
-async function generateTokens(res, user, setAccessToken = true) {
+async function generateTokens(req, res, user, setAccessToken = true) {
   const normalizedUser = userService.normalize(user);
 
   const accessToken = setAccessToken ? jwtService.sign(normalizedUser) : null;
   const refreshAccessToken = jwtService.signRefresh(normalizedUser);
 
+  const requestOrigin = req.headers.origin || '';
+
+  const domain = getDomain(requestOrigin);
+
   if (setAccessToken) {
     res.cookie('accessToken', accessToken, {
+      domain: domain,
       HttpOnly: true,
       maxAge: 180 * 60 * 1000,
       sameSite: 'None',
@@ -48,6 +53,7 @@ async function generateTokens(res, user, setAccessToken = true) {
   await tokenService.save(normalizedUser.id, refreshAccessToken);
 
   res.cookie('refreshToken', refreshAccessToken, {
+    domain: domain,
     HttpOnly: true,
     maxAge: 30 * 24 * 60 * 60 * 1000,
     sameSite: 'None',
@@ -60,6 +66,20 @@ async function generateTokens(res, user, setAccessToken = true) {
     user: normalizedUser,
     accessToken: setAccessToken ? accessToken : null,
   });
+}
+
+function getDomain(origin) {
+  let domain = '';
+
+  const parts = origin.split('.');
+  if (parts.length > 2) {
+    domain = parts.slice(1).join('.');
+    console.log(domain);
+  } else {
+    domain = origin;
+  }
+
+  return domain;
 }
 
 const register = async (req, res) => {
@@ -92,7 +112,7 @@ const activate = async (req, res) => {
   user.activationToken = null;
   await user.save();
 
-  generateTokens(res, user);
+  generateTokens(req, res, user);
 };
 
 const login = async (req, res) => {
@@ -114,7 +134,7 @@ const login = async (req, res) => {
     throw ApiError.badRequest('Account is not activated');
   }
 
-  generateTokens(res, user);
+  generateTokens(req, res, user);
 };
 
 const refresh = async (req, res) => {
@@ -127,7 +147,7 @@ const refresh = async (req, res) => {
   }
 
   const user = await userService.findByEmail(userData.email);
-  await generateTokens(res, user);
+  await generateTokens(req, res, user);
 };
 
 const logout = async (req, res) => {
