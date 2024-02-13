@@ -24,9 +24,11 @@ database.once('connected', () => {
 
 const app = express();
 
+const clientUrls = process.env.CLIENT_URLS.split(',').map((url) => url.trim());
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: clientUrls,
     credentials: true,
   })
 );
