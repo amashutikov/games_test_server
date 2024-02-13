@@ -40,11 +40,9 @@ async function generateTokens(req, res, user, setAccessToken = true) {
 
   const domain = getDomain(requestOrigin);
 
-  console.log(domain);
-
   if (setAccessToken) {
     res.cookie('accessToken', accessToken, {
-      domain: domain,
+      domain,
       HttpOnly: true,
       maxAge: 180 * 60 * 1000,
       sameSite: 'None',
@@ -55,7 +53,7 @@ async function generateTokens(req, res, user, setAccessToken = true) {
   await tokenService.save(normalizedUser.id, refreshAccessToken);
 
   res.cookie('refreshToken', refreshAccessToken, {
-    domain: domain,
+    domain,
     HttpOnly: true,
     maxAge: 30 * 24 * 60 * 60 * 1000,
     sameSite: 'None',
@@ -74,6 +72,7 @@ function getDomain(origin) {
   let domain = '';
 
   const parts = origin.split('//');
+  console.log(parts);
   if (parts.length) {
     domain = parts[1];
   } else {
