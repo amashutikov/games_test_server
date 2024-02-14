@@ -150,7 +150,14 @@ const verify = async (req, res) => {
     if (accessToken) {
       const userData = jwtService.verify(accessToken);
       req.user = userData;
-      res.status(200).send({ success: true, message: 'Welcome!', accessToken: accessToken });
+      res
+        .status(200)
+        .send({
+          success: true,
+          message: 'Welcome!',
+          accessToken: accessToken,
+          user: userData,
+        });
     } else {
       // No access token, try to verify using refresh token
       await refresh(req, res);
