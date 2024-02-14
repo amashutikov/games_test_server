@@ -36,8 +36,6 @@ async function generateTokens(res, user, setAccessToken = true) {
   const accessToken = setAccessToken ? jwtService.sign(normalizedUser) : null;
   const refreshAccessToken = jwtService.signRefresh(normalizedUser);
 
-  const requestOrigin = req.headers.origin || '';
-
   if (setAccessToken) {
     res.cookie('accessToken', accessToken, {
       HttpOnly: true,
