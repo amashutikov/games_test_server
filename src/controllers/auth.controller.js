@@ -146,9 +146,9 @@ const logout = async (req, res) => {
 const verify = async (req, res) => {
   try {
     const accessToken = req.cookies.accessToken;
+    const userData = jwtService.verify(accessToken);
 
-    if (accessToken) {
-      const userData = jwtService.verify(accessToken);
+    if (userData) {
       req.user = userData;
       res.status(200).send({
         success: true,
