@@ -74,4 +74,5 @@ export const userService = {
   register,
   findById,
   updateUser,
+  prepareUser,
 };
