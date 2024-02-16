@@ -15,6 +15,10 @@ function normalize({ id, email }) {
   return { id, email };
 }
 
+function prepareUser({ id, email, firstName, secondName, country, image }) {
+  return { id, email, firstName, secondName, country, image };
+}
+
 async function register(email, password) {
   const activationToken = uuidv4();
 
@@ -58,7 +62,7 @@ async function updateUser(
 
     const updatedUser = await user.save();
 
-    return updatedUser;
+    return prepareUser(updatedUser);
   } catch (error) {
     throw ApiError.badRequest('Error while updating the user');
   }
