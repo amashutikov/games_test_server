@@ -7,6 +7,8 @@ import { errorMiddleware } from './middlewares/errorMiddleware.js';
 import cookieParser from 'cookie-parser';
 import { gamesRouter } from './routes/games.route.js';
 import { newsRouter } from './routes/news.route.js';
+import { authMiddleware } from './middlewares/authMiddleware.js';
+import { userRouter } from './routes/user.route.js';
 
 const PORT = process.env.PORT || 3006;
 const mongoString = process.env.DATABASE_URL;
@@ -37,6 +39,8 @@ app.use(cookieParser());
 app.use(authRouter);
 app.use('/games', gamesRouter);
 app.use('/news', newsRouter);
+app.use('/user', authMiddleware);
+app.use('/user', userRouter);
 
 app.get('/', (req, res) => {
   res.send('Hello');

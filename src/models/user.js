@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema(
   {
@@ -14,10 +14,22 @@ const userSchema = new mongoose.Schema(
     activationToken: {
       type: String,
     },
+    firstName: {
+      type: String,
+    },
+    secondName: {
+      type: String,
+    },
+    country: {
+      type: String,
+    },
+    image: {
+      type: Buffer,
+    },
   },
   {
     timestamps: true,
-  },
+  }
 );
 
 export const User = mongoose.model('User', userSchema);

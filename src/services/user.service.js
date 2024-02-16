@@ -7,6 +7,10 @@ function findByEmail(email) {
   return User.findOne({ email: email });
 }
 
+function findById(id) {
+  return User.findById(id);
+}
+
 function normalize({ id, email }) {
   return { id, email };
 }
@@ -33,8 +37,37 @@ async function register(email, password) {
   await emailService.sendActivationEmail(email, activationToken);
 }
 
+async function updateUser(
+  id,
+  firstName = null,
+  secondName = null,
+  country = null,
+  image = null
+) {
+  try {
+    const user = await User.findById(id);
+
+    if (!user) {
+      throw ApiError.badRequest('User not found');
+    }
+
+    user.firstName = firstName;
+    user.secondName = secondName;
+    user.country = country;
+    user.image = image;
+
+    const updatedUser = await user.save();
+
+    return updatedUser;
+  } catch (error) {
+    throw ApiError.badRequest('Error while updating the user');
+  }
+}
+
 export const userService = {
   findByEmail,
   normalize,
   register,
+  findById,
+  updateUser,
 };

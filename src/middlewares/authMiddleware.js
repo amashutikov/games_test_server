@@ -1,4 +1,4 @@
-import { jwtService } from '../services/jwt.service';
+import { jwtService } from '../services/jwt.service.js';
 
 export const authMiddleware = (req, res, next) => {
   const autorization = req.headers['autorization'] || '';
