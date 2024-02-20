@@ -11,8 +11,16 @@ function findById(id) {
   return User.findById(id);
 }
 
-function normalize({ id, email, firstName, secondName, country, image }) {
-  return { id, email, firstName, secondName, country, image };
+function normalize({
+  id,
+  email,
+  firstName,
+  secondName,
+  country,
+  image,
+  likedGames,
+}) {
+  return { id, email, firstName, secondName, country, image, likedGames };
 }
 
 async function register(email, password) {
@@ -35,6 +43,44 @@ async function register(email, password) {
   await user.save();
 
   await emailService.sendActivationEmail(email, activationToken);
+}
+
+async function addLikedGames(userId, gameId) {
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      throw ApiError.badRequest('User not found');
+    }
+
+    if (!user.likedGames.includes(gameId)) {
+      user.likedGames.push(gameId);
+    }
+
+    const updatedUser = await user.save();
+
+    return normalize(updatedUser);
+  } catch (error) {
+    throw ApiError.badRequest('Error while updating the user');
+  }
+}
+
+async function removeLikedGame(userId, gameId) {
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      throw ApiError.badRequest('User not found');
+    }
+
+    user.likedGames = user.likedGames.filter((id) => id !== gameId);
+
+    const updatedUser = await user.save();
+
+    return normalize(updatedUser);
+  } catch (error) {
+    throw ApiError.badRequest('Error while updating the user');
+  }
 }
 
 async function updateUser(
@@ -70,4 +116,6 @@ export const userService = {
   register,
   findById,
   updateUser,
+  addLikedGames,
+  removeLikedGame,
 };

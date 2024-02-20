@@ -6,3 +6,6 @@ export const userRouter = express.Router();
 
 userRouter.get('/:id', catchError(userController.getUserById));
 userRouter.patch('/', catchError(userController.updateUser));
+userRouter.patch('/like', catchError(userController.addLikedGame));
+userRouter.patch('/dislike', catchError(userController.removeLikedGame));
+

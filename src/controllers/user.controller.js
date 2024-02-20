@@ -30,7 +30,33 @@ const updateUser = async (req, res) => {
   res.status(200).send(user);
 };
 
+const addLikedGame = async (req, res) => {
+  const { gameId, id } = req.body;
+
+  if (!id || !gameId) {
+    throw ApiError.badRequest('Bad request', errors);
+  }
+
+  const user = await userService.addLikedGames(id, gameId);
+
+  res.status(200).send(user);
+};
+
+const removeLikedGame = async (req, res) => {
+  const { gameId, id } = req.body;
+
+  if (!id || !gameId) {
+    throw ApiError.badRequest('Bad request', errors);
+  }
+
+  const user = await userService.removeLikedGame(id, gameId);
+
+  res.status(200).send(user);
+};
+
 export const userController = {
   getUserById,
   updateUser,
+  addLikedGame,
+  removeLikedGame,
 };

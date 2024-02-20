@@ -26,6 +26,9 @@ const userSchema = new mongoose.Schema(
     image: {
       type: Buffer,
     },
+    likedGames: {
+      type: [String],
+    },
   },
   {
     timestamps: true,
