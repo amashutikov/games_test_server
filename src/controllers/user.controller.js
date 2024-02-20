@@ -9,7 +9,7 @@ const getUserById = async (req, res) => {
 
   const user = await userService.findById(userId);
 
-  res.status(200).send(userService.prepareUser(user));
+  res.status(200).send(userService.normalize(user));
 };
 
 const updateUser = async (req, res) => {

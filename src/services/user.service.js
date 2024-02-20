@@ -11,11 +11,7 @@ function findById(id) {
   return User.findById(id);
 }
 
-function normalize({ id, email }) {
-  return { id, email };
-}
-
-function prepareUser({ id, email, firstName, secondName, country, image }) {
+function normalize({ id, email, firstName, secondName, country, image }) {
   return { id, email, firstName, secondName, country, image };
 }
 
@@ -62,7 +58,7 @@ async function updateUser(
 
     const updatedUser = await user.save();
 
-    return prepareUser(updatedUser);
+    return normalize(updatedUser);
   } catch (error) {
     throw ApiError.badRequest('Error while updating the user');
   }
@@ -74,5 +70,4 @@ export const userService = {
   register,
   findById,
   updateUser,
-  prepareUser,
 };
