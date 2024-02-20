@@ -39,7 +39,7 @@ app.use(cookieParser());
 app.use(authRouter);
 app.use('/games', gamesRouter);
 app.use('/news', newsRouter);
-// app.use('/user', authMiddleware);
+app.use('/user', authMiddleware);
 app.use('/user', userRouter);
 
 app.get('/', (req, res) => {
