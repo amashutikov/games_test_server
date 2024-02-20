@@ -153,7 +153,7 @@ const verify = async (req, res) => {
       res.status(200).send({
         success: true,
         message: 'Welcome!',
-        user: userData,
+        userId: userData.id,
       });
     } else {
       // No access token, try to verify using refresh token
