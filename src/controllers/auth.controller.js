@@ -140,9 +140,7 @@ const logout = async (req, res) => {
 
   await tokenService.remove(userData.id);
 
-  res.status(204).send({
-    message: 'Bye!',
-  });
+  res.sendStatus(204);
 };
 
 const verify = async (req, res) => {
