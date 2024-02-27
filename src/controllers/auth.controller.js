@@ -140,8 +140,13 @@ const logout = async (req, res) => {
 
   await tokenService.remove(userData.id);
 
-  res.clearCookie('refreshToken', { path: '/' });
-  res.clearCookie('accessToken', { path: '/' });
+  res.cookie('accessToken', '', {
+    HttpOnly: true,
+    maxAge: 180 * 60 * 1000,
+    sameSite: 'None',
+    secure: true,
+  });
+
   res.sendStatus(204);
 };
 
