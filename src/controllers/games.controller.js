@@ -1,4 +1,3 @@
-import { DataModel } from '../models/game.js';
 import { ApiError } from '../exeptions/api.error.js';
 import { gameService } from '../services/game.service.js';
 
