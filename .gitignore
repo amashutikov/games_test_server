@@ -2,3 +2,4 @@
 .env
 .idea
 /src/saveDataToMongo.js
+/src/index.html
